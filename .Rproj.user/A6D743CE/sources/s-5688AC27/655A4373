@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1604548801773.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3676358823",
+    "id" : "655A4373",
+    "lastKnownWriteTime" : 1604350838,
+    "last_content_update" : 1604350838,
+    "path" : "~/Documents/CPBS/Courses/CPBS 7711/Module3/PFFindeR/app/plotutils.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

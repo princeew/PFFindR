@@ -1,0 +1,36 @@
+# for each gene in the locus
+#   sub that gene with every other gene associated in that locus
+#   calculate g_star density
+#   remove that locus
+#   calculate the empty locus density
+#   return g_star density - empty locus density
+calculateGeneScore <- function(network, pf_data) {
+  A <- network@adjacency_matrix
+  loci <- foreach (i=1:length(network@loci),
+           .combine = "c") %dopar% {
+    empty_locus_density <- .getEmptyLocusDensity(A, i)
+    gene_scores <- foreach (g_i=pf_data@loci_data[[i]]@true_members,
+             .combine = "c") %dopar% {
+      degrees <- foreach(other_locus=network@genes,
+              .combine = "c") %dopar% {
+        matches <- pf_data@cfn_data %>%
+          filter(X1 == g_i & X2 == other_locus)
+        return(ifelse(nrow(matches) > 0, 1, 0))
+      }
+      gene_score <- sum(degrees)
+      return(gene_score)
+             }
+    return(gene_scores)
+           }
+
+  return(loci)
+}
+
+.getEmptyLocusDensity <- function(A, i) {
+  # Helper function to create an empty locus in the adjacency matrix and
+  # returns the density of the subnetwork.
+  empty_locus <- A
+  empty_locus[i,] <- 0
+  empty_locus_density <- sum(rowSums(empty_locus))
+  return(empty_locus_density)
+}

@@ -1,0 +1,22 @@
+constructCandidateNetwork <- function(pf_data, member="null_members") {
+  # Create a PrixFixeNetwork
+  # Note: slot = member overrides the synthesize_null_members function because
+  # null_members and true_members have their own slots inside a Locus class object.
+  candidate_network <- new(
+    "PrixFixeNetwork",
+    "loci" = sampleLoci(pf_data, slot = "locus_id"),
+    "genes" = select_unique_genes(pf_data, member))
+  # return(candidate_network)
+  return(calculateAdjacencyMatrix(candidate_network, pf_data))
+}
+
+select_unique_genes <- function(pf_data, member) {
+  # Ensure genes returned are unique for each locus
+  while (TRUE) {
+    genes <- sampleLoci(synthesizeNullMembers(pf_data),
+                        slot = member)
+    if (length(unique(genes)) == length(genes)) {
+      return(genes)
+    }
+  }
+}

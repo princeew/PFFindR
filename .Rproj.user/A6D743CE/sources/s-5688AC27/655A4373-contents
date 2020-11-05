@@ -1,0 +1,140 @@
+library(tidyverse)
+library(cowplot)
+library(igraph)
+library(ggraph)
+# General utilities to render data in PFFindeR
+source("../R/pfndata.R")
+
+PRELOADED_DATA = list(
+  'fa_loci' = './preloaded_data/FA_loci.txt',
+  'string_db' = './preloaded_data/Day3_STRING.txt'
+  )
+
+load_target_loci_table <- function(input) {
+  # Function to load the target loci table for viewing
+  
+  # Check if preloaded loci dataset is selected (is not NA)
+  if (is.na(input$preloaded_loci_dataset)) {
+    return(data.frame(matrix(nrow = 10, ncol=10)))
+  } else {
+    # Select path from PRELOADED_DATA
+    path <- PRELOADED_DATA[[input$preloaded_loci_dataset]]
+    target_loci_data <- read_target_loci_data(path)
+    names(target_loci_data) <- c("Metalabel", 
+                                 "LocusID", 
+                                 paste0("Gene ", 1:(ncol(target_loci_data) - 2)))
+
+    return(target_loci_data)
+  }
+}
+
+render_tl_summary_value_boxes <- function(input, output) {
+  # Generate the summary value boxes for the target loci
+  
+  # Placeholder params for visualization purposes
+  reactive({
+    
+  })
+  n_loci <- 0
+  
+  if (!is.na(input$preloaded_loci_dataset)) {
+    path <- PRELOADED_DATA[[input$preloaded_loci_dataset]]
+    target_loci_data <- read_target_loci_data(path)
+    n_loci <- length(unique(target_loci_data[,2])) # number of unique loci
+  }
+  return(reactive({
+    output$tl_summary_n_loci <- shinydashboard::renderValueBox({
+      shinydashboard::valueBox(value=n_loci, "Unique Loci", icon = icon("list"))
+    })
+  }))
+  
+}
+
+load_cofunction_network_table <- function(input) {
+  # Function to load the cofunction network table for vieiwing
+  
+  # Check if preloaded cfn is selected (is not NA)
+  if (is.na(input$preloaded_cfn_dataset)) {
+    return(data.frame(matrix(nrow = 10, ncol=10)))
+  } else {
+    # Select path from PRELOADED_DATA
+    path <- PRELOADED_DATA[[input$preloaded_cfn_dataset]]
+
+    cfn_table <- read_data_func(path)
+    names(cfn_table) <- c("Gene A", "Gene B", "Weight")
+    
+    return(cfn_table)
+  }
+}
+
+generate_plotly_heatmap <- function(input) {
+  # Function to load the cofunction network table for vieiwing
+  
+  # Check if preloaded cfn is selected (is not NA)
+  if (is.na(input$preloaded_cfn_dataset)) {
+    return(data.frame(matrix(nrow = 10, ncol=10)))
+  } else {
+    # Select path from PRELOADED_DATA
+    path <- PRELOADED_DATA[[input$preloaded_cfn_dataset]]
+    
+    cfn_table <- read_data_func(path)
+    # Testing on smaller dataset..
+    cfn_table <- cfn_table[1:100000,]
+    hm <- plotly::plot_ly(
+      x = cfn_table$X1,
+      y = cfn_table$X2,
+      z = cfn_table$X3,
+      type = "heatmap"
+    )
+    
+    return(hm)
+  }
+}
+
+generate_plotly_quantiles <- function(input) {
+  # Function to load the cofunction network table for vieiwing
+  
+  # Check if preloaded cfn is selected (is not NA)
+  if (is.na(input$preloaded_cfn_dataset)) {
+    return(data.frame(matrix(nrow = 10, ncol=10)))
+  } else {
+    # Select path from PRELOADED_DATA
+    path <- PRELOADED_DATA[[input$preloaded_cfn_dataset]]
+    
+    cfn_table <- read_data_func(path)
+    # Testing on smaller dataset..
+    quantile_df <- tibble::tibble('gene' = c(cfn_table$X1, cfn_table$X2))
+    quantile_df <- quantile_df %>%
+      group_by(gene) %>% count()
+    
+    p <- plotly::plot_ly(x=quantile_df$n, type = "histogram")
+    return(p)
+  }
+}
+
+generate_subnetwork_graph <- function(candidate_network) {
+  g <- graph_from_adjacency_matrix(as.matrix(candidate_network@adjacency_matrix))
+  subnetwork_graph <- ggraph(g, layout='circle') + 
+    geom_edge_link() + 
+    geom_node_text(label=candidate_network@genes)
+  return(plot_to_gtable(subnetwork_graph))
+}
+
+create_subnetwork_gallery <- function(population, n_view = 4) {
+  
+  if (n_view > length(population)) {
+    n_view <- length(population)
+  }
+  select_graphs <- sample(1:length(population), n_view, replace = F)
+  select_graphs <- unlist(population)[select_graphs]
+  plotlist <- list()
+  for (i in 1:n_view) {
+    plotlist[[i]] <- generate_subnetwork_graph(select_graphs[[i]])
+  }
+  # plotlist <- foreach(i=1:length(select_graphs), .combine = 'list') %dopar% {
+  #   generate_subnetwork_graph(select_graphs[[i]])
+  # }
+  # size <- sqrt(ifelse(n_view >= length(population), n_view, length_population))
+  return(do.call("plot_grid", plotlist))
+  # return(select_graphs)
+}

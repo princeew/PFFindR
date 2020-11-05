@@ -1,0 +1,10 @@
+initializePopulation <- function(pf_data,
+                                  population_size,
+                                  members = c("true_members", "null_members")) {
+  dopar_progress_bar <- make_progress_bar(population_size)
+  population <- foreach (i=1:population_size,
+                         .combine = dopar_progress_bar()) %dopar% {
+    return(constructCandidateNetwork(pf_data, members))
+  }
+  return(population)
+}
