@@ -6,9 +6,9 @@ Depends: R (>= 2.10)
 Author: Eric Prince
 Maintainer: Eric Prince <Eric.Prince@CUAnschutz.edu>
 Description: PFFindR is a lightweight R implementation of the Prix Fixe methodology 
-proposed in: Selecting causal genes from genome-wide association studies via 
-functionally coherent subnetworks. Murat Tasan, Gabriel Musso, Tong Hao, Marc 
-Vidal, Calum A. MacRae, Frederick P. Roth; Nature Methods (2015-02)
+    proposed in: Selecting causal genes from genome-wide association studies via 
+    functionally coherent subnetworks. Murat Tasan, Gabriel Musso, Tong Hao, Marc 
+    Vidal, Calum A. MacRae, Frederick P. Roth; Nature Methods (2015-02)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
