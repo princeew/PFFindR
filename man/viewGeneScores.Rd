@@ -14,6 +14,9 @@ score values calculated. To do this, one can run \code{calculateGeneScores}.}
 
 \item{scores}{score values return from \code{calculateGeneScore}.}
 }
+\value{
+a ggplot object
+}
 \description{
 Visualize gene contribution scores for a Prix Fixe network
 }

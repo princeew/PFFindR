@@ -4,10 +4,11 @@
 #' score values calculated. To do this, one can run \code{calculateGeneScores}.
 #' @param network A \code{PrixFixeNetwork}. Probably selected using \code{getTopNetwork}.
 #' @param scores score values return from \code{calculateGeneScore}.
+#' @return a ggplot object
 #'
 viewGeneScores <- function(pf_data, network, scores=NA) {
 
-  if (!is.na(scores)) {
+  if (!all(is.na(scores))) {
     gene_score_plot <- .plot_loci(pf_data, network, scores)
     return(gene_score_plot)
   } else {

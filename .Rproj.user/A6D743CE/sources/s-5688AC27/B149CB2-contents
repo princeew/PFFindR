@@ -1,6 +1,0 @@
-sampleLoci <- function(pfn_data, slot="true_members") {
-  # Randomly sample loci genes to construct Prix Fixe Network
-  slot_values <- foreach (locus=pfn_data@loci_data, .combine = "c") %dopar%
-    sample(attr(locus, slot), size=1)
-  return(slot_values)
-}
