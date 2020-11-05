@@ -24,10 +24,47 @@ the PFFindR package will be automatically installed, executed, and uninstalled.
 This behavior can be modified using the command line options (see Command Line
 Usage Example below).
 
+### Uninstall PFFindR
+
+To uninstall PFFindR run `remove.packages("PFFindR")` from your R console.
+
 ## Usage
+
+### Required Input Files and Formats
 
 
 ### R Console Usage
+
+```
+  library(PFFindR)
+  
+  # Load a PFData object
+  pf_data <- PFDataLoader(
+      "../app/preloaded_data/FA_loci.txt",
+      "../app/preloaded_data/Day3_STRING.txt")
+  
+  # Generate population of subnetworks
+  population <- initializePopulation(
+      pf_data = pf_data, 
+      population_size = 100, 
+      members = "true_members")
+  
+  # Evaluate population significance
+  population_significance <- evaluatePopulationSignificance(
+      pf_data = pf_data,
+      population = population,
+      num_trials = 100)
+      
+  # Calculate the gene scores from the top network
+  top_network <- getTopNetwork(population)
+  scores <- calculateGeneScores(top_network, pf_data)
+  
+  # Visualize the gene scores (will open a plot)
+  viewGeneScores(PF_FanconiAnemia, getTopNetwork(population), scores)
+  
+  # Save the workspace
+  save.image()
+```
 
 
 #### Package Documentation
@@ -78,6 +115,8 @@ function documentation can be obtained using either of the following two
                           "True"]
 ```
 
-### Preloaded Data
+## Preloaded Data
 
-### Troubleshooting
+## Example Output
+
+## Troubleshooting
