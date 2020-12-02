@@ -12,6 +12,16 @@ findPFNetworks <- function(pf_data,
                            save_network = TRUE,
                            network_path = "./Day3_Output_Network_pval.txt") {
 
+#   art <- "
+#  _______  ________  ________  _____                __  _______
+# |_   __ \|_   __  ||_   __  ||_   _|              |  ]|_   __ \
+#   | |__) | | |_ \_|  | |_ \_|  | |   _ .--.   .--.| |   | |__) |
+#   |  ___/  |  _|     |  _|     | |  [ `.-. |/ /'`\' |   |  __ /
+#  _| |_    _| |_     _| |_     _| |_  | | | || \__/  |  _| |  \ \_
+# |_____|  |_____|   |_____|   |_____|[___||__]'.__.;__]|____| |___|
+#
+#   "
+
   # Initialize a population of possible solutions
   population <- initializePopulation(pf_data = pf_data,
                                      population_size = population_size,
