@@ -6,9 +6,10 @@
 #'
 #' @param candidate_network A \code{PrixFixeNetwork} generated from \code{constructCandidateNetwork}
 #' @param pf_data A \code{PFData} object generated from \code{PFDataLoader}
+#' @param binary boolean for whether to get binary (TRUE) or weighted (FALSE) adjacency matrix.
 #' @return \code{candidate_network} with updated \code{adjancency_matrix} slot
 #'
-calculateAdjacencyMatrix <- function(candidate_network, pf_data) {
+calculateAdjacencyMatrix <- function(candidate_network, pf_data, binary = TRUE) {
 
   # Build a dummy matrix to store the network
   size <- length(candidate_network@genes)
@@ -19,7 +20,8 @@ calculateAdjacencyMatrix <- function(candidate_network, pf_data) {
   # Fill matrix with matches from the CFN data
   adjacency_matrix <- foreach (n=1:nrow(adjacency_matrix),
                                .combine = "rbind") %dopar% {
-                                 .row_parser(adjacency_matrix, pf_data@cfn_data, n)
+                                 .row_parser(adjacency_matrix, pf_data@cfn_data, n,
+                                             binary)
                                }
 
   # Format adjacency_matrix as dataframe with row/column namesrarrr
@@ -32,7 +34,7 @@ calculateAdjacencyMatrix <- function(candidate_network, pf_data) {
   return(candidate_network)
 }
 
-.row_parser <- function(adjacency_matrix, cfn_data, n) {
+.row_parser <- function(adjacency_matrix, cfn_data, n, binary) {
   # Worker function to parallel compute adjacency matrix row. This is used inside the
   # `calculateAdjacencyMatrix` function.
 
@@ -40,11 +42,21 @@ calculateAdjacencyMatrix <- function(candidate_network, pf_data) {
     geneA <- rownames(adjacency_matrix)[n]
     geneB <- names(adjacency_matrix)[m]
     sset <- cfn_data[(cfn_data$X1 == geneA & cfn_data$X2 == geneB),]
-    if (nrow(sset) > 0) {
-      return(1)
+    if (binary) {
+      if (nrow(sset) > 0) {
+        return(1)
+      } else {
+        return(0)
+      }
     } else {
-      return(0)
+      if (nrow(sset) > 0) {
+        # weight value for the interaction is stored in sset$X3
+        return(as.numeric(sset$X3))
+      } else {
+        return(0)
+      }
     }
+
   }
   return(r)
 }
