@@ -4,7 +4,8 @@
 #' of \code{PrixFixeNetwork} objects.
 #'
 #' @param population a list of \code{PrixFixeNetwork} objects
-#' @param multiple a Boolean on whether to return multiple top networks. Currently not functional.
+#' @param multiple a Boolean on whether to return multiple top networks.
+#' @param n integer for how many networks to return if multiple==TRUE
 #' @return a \code{PrixFixeNetwork} object
 #'
 #' @examples
@@ -17,7 +18,7 @@
 #' top_network <- getTopNetwork(population)
 #' }
 #'
-getTopNetwork <- function(population, multiple = FALSE) {
+getTopNetwork <- function(population, multiple = FALSE, n = 10) {
   # Extract the top network (or networks) from the population based on density.
   densities <- getNetworkDensity(population, return_mean = FALSE)
   top_network_index <- grep(max(densities), densities)
@@ -26,6 +27,12 @@ getTopNetwork <- function(population, multiple = FALSE) {
   # the first index in the list.
   if (!multiple & length(top_network_index) > 1) {
     top_network_index <- top_network_index[1]
+    return(population[[top_network_index]])
+  } else if (!multiple & length(top_network_index) == 1){
+    return(population[[top_network_index]])
+  } else {
+    top_network_index <- sort(densities, decreasing = TRUE)[1:n]
+    return(population[top_network_index])
   }
-  return(population[[top_network_index]])
+
 }
