@@ -57,7 +57,7 @@ main <- function(args) {
                  population_size = args$population_size,
                  binary = !args$weighted_network,  # NOT weighted_network
                  mutation_rate = args$mutation_rate,
-                 optimizer_stop_threhsold = args$optimizer_stop_threshold,
+                 optimizer_stop_threshold = args$optimizer_stop_threshold,
                  plot_fitness = args$plot_fitness,
                  plot_fitness_path = args$plot_fitness_path,
                  save_gene_scores = args$save_gene_scores,
